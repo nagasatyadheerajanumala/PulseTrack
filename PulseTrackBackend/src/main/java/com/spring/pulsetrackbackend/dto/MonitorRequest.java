@@ -7,4 +7,5 @@ public class MonitorRequest {
     private String name;
     private String url;
     private int checkFreq;
+    private int alertFrequencyMinutes;
 }

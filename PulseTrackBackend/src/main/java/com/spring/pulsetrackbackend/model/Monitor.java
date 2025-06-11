@@ -21,6 +21,12 @@ public class Monitor {
     private boolean isActive;
 
     private LocalDateTime createdAt;
+    @Column(name = "last_alert_sent_at")
+    private LocalDateTime lastAlertSentAt;
+
+    @Column(nullable = false)
+    private int alertFrequencyMinutes;
+
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

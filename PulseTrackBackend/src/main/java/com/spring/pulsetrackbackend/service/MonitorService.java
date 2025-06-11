@@ -1,6 +1,5 @@
 package com.spring.pulsetrackbackend.service;
 
-
 import com.spring.pulsetrackbackend.dto.MonitorRequest;
 import com.spring.pulsetrackbackend.dto.MonitorResponse;
 import com.spring.pulsetrackbackend.model.Monitor;
@@ -17,21 +16,25 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class MonitorService {
+
     private final MonitorRepository monitorRepository;
     private final UserRepository userRepo;
 
-    public MonitorResponse createMonitor(String userEmail, MonitorRequest request){
+    public MonitorResponse createMonitor(String userEmail, MonitorRequest request) {
         User user = userRepo.findByEmail(userEmail).orElseThrow();
 
         Monitor monitor = Monitor.builder()
                 .name(request.getName())
                 .url(request.getUrl())
                 .checkFreq(request.getCheckFreq())
+                .alertFrequencyMinutes(request.getAlertFrequencyMinutes()) // 🆕
                 .isActive(true)
                 .createdAt(LocalDateTime.now())
                 .user(user)
                 .build();
+
         monitorRepository.save(monitor);
+
         return MonitorResponse.builder()
                 .id(monitor.getId())
                 .name(monitor.getName())
@@ -41,10 +44,10 @@ public class MonitorService {
                 .build();
     }
 
-    public List<MonitorResponse> getUserMonitors(String userEmail){
+    public List<MonitorResponse> getUserMonitors(String userEmail) {
         User user = userRepo.findByEmail(userEmail).orElseThrow();
         return monitorRepository.findByUser(user).stream()
-                .map(m-> MonitorResponse.builder()
+                .map(m -> MonitorResponse.builder()
                         .id(m.getId())
                         .name(m.getName())
                         .url(m.getUrl())
@@ -52,7 +55,6 @@ public class MonitorService {
                         .isActive(m.isActive())
                         .build())
                 .collect(Collectors.toList());
-
     }
 
     public void toggleMonitorStatus(Long monitorId, String email) {
@@ -66,5 +68,4 @@ public class MonitorService {
         monitor.setActive(!monitor.isActive());
         monitorRepository.save(monitor);
     }
-
 }

@@ -3,8 +3,8 @@ package com.spring.pulsetrackbackend.scheduler;
 import com.spring.pulsetrackbackend.model.Monitor;
 import com.spring.pulsetrackbackend.repository.MonitorRepository;
 import com.spring.pulsetrackbackend.service.MonitorLogService;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -14,38 +14,36 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class MonitorScheduler {
 
     private final MonitorRepository monitorRepo;
     private final MonitorLogService logService;
 
-    @PostConstruct
-    public void init() {
-        System.out.println("✅ Monitor scheduler initialized");
-    }
+    @Scheduled(fixedRate = 60000) // Every 60 seconds
+    public void runChecks() {
+        List<Monitor> monitors = monitorRepo.findAll();
 
-    @Scheduled(fixedDelay = 60000) // every 60 seconds
-    public void checkMonitors() {
-        List<Monitor> activeMonitors = monitorRepo.findAll()
-                .stream()
-                .filter(Monitor::isActive)
-                .toList();
+        for (Monitor monitor : monitors) {
+            if (!monitor.isActive()) continue;
 
-        for (Monitor monitor : activeMonitors) {
             try {
                 long start = System.currentTimeMillis();
-
                 HttpURLConnection connection = (HttpURLConnection) new URL(monitor.getUrl()).openConnection();
                 connection.setRequestMethod("GET");
-                connection.setConnectTimeout(5000);
+                connection.setConnectTimeout(5000); // optional
                 connection.connect();
 
                 int statusCode = connection.getResponseCode();
                 long responseTime = System.currentTimeMillis() - start;
 
-                logService.saveLog(monitor.getId(), statusCode, responseTime);
+                log.info("Checked {}: status={}, time={}ms", monitor.getUrl(), statusCode, responseTime);
+
+                logService.saveLogWithRetry(monitor.getId());
+
             } catch (Exception e) {
-                logService.saveLog(monitor.getId(), 500, 0);
+                log.warn("Monitor failed: " + monitor.getUrl(), e);
+                logService.saveLogWithRetry(monitor.getId());
             }
         }
     }
