@@ -28,4 +28,12 @@ public class MonitorController {
         String email = principal.getName();
         return ResponseEntity.ok(monitorService.getUserMonitors(email));
     }
+
+    @PutMapping("/{monitorId}/toggle")
+    public ResponseEntity<Void> toggleMonitor(
+            @PathVariable Long monitorId,
+            Principal principal) {
+        monitorService.toggleMonitorStatus(monitorId, principal.getName());
+        return ResponseEntity.ok().build();
+    }
 }

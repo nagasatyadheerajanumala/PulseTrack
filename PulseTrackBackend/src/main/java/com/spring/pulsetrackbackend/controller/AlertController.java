@@ -16,8 +16,17 @@ public class AlertController {
     private final AlertService alertService;
 
     @GetMapping
-    public ResponseEntity<List<AlertResponse>> getAlerts(Principal principal) {
+    public ResponseEntity<List<AlertResponse>> getAlerts(@RequestParam boolean resolved, Principal principal) {
         String email = principal.getName();
-        return ResponseEntity.ok(alertService.getUserAlerts(email));
+        return ResponseEntity.ok(alertService.getAlerts(email, resolved));
+    }
+
+    @PutMapping("/{alertId}/resolve")
+    public ResponseEntity<String> resolveAlert(
+            @PathVariable Long alertId,
+            Principal principal){
+        String email = principal.getName();
+        alertService.resolveAlert(alertId, email);
+        return ResponseEntity.ok().build();
     }
 }

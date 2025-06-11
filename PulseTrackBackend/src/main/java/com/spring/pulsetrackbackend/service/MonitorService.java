@@ -55,4 +55,16 @@ public class MonitorService {
 
     }
 
+    public void toggleMonitorStatus(Long monitorId, String email) {
+        Monitor monitor = monitorRepository.findById(monitorId)
+                .orElseThrow(() -> new RuntimeException("Monitor not found"));
+
+        if (!monitor.getUser().getEmail().equals(email)) {
+            throw new SecurityException("Unauthorized to modify this monitor.");
+        }
+
+        monitor.setActive(!monitor.isActive());
+        monitorRepository.save(monitor);
+    }
+
 }

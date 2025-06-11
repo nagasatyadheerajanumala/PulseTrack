@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 public class AlertResponse {
     private Long id;
     private String message;
-    private LocalDateTime createdAt;
     private boolean resolved;
+    private LocalDateTime createdAt;
+    private Long monitorId;
+    private String monitorName;
 }

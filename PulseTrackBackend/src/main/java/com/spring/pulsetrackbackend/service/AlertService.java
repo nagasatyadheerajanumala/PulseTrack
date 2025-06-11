@@ -33,4 +33,30 @@ public class AlertService {
                 .resolved(alert.isResolved())
                 .build()).collect(Collectors.toList());
     }
+
+    public void resolveAlert(Long alertId, String email){
+        Alert alert = alertRepo.findById(alertId)
+                .orElseThrow(() -> new RuntimeException("Alert not found"));
+
+        if(!alert.getMonitor().getUser().getEmail().equals(email)){
+            throw new RuntimeException("Unauthorized to resolve this alert");
+        }
+        alert.setResolved(true);
+        alertRepo.save(alert);
+    }
+
+    public List<AlertResponse> getAlerts(String email, boolean resolved) {
+        return alertRepo.findByMonitorUserEmailAndResolved(email, resolved).stream()
+                .map(alert -> AlertResponse.builder()
+                        .id(alert.getId())
+                        .message(alert.getMessage())
+                        .resolved(alert.isResolved())
+                        .createdAt(alert.getCreatedAt())
+                        .monitorId(alert.getMonitor().getId())
+                        .monitorName(alert.getMonitor().getName())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+
 }
