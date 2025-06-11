@@ -3,7 +3,7 @@ package com.spring.pulsetrackbackend.controller;
 import com.spring.pulsetrackbackend.dto.LoginRequest;
 import com.spring.pulsetrackbackend.dto.RegisterRequest;
 import com.spring.pulsetrackbackend.model.User;
-import com.spring.pulsetrackbackend.repository.UserRespository;
+import com.spring.pulsetrackbackend.repository.UserRepository;
 import com.spring.pulsetrackbackend.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
-    private final UserRespository userRepo;
+    private final UserRepository userRepo;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
