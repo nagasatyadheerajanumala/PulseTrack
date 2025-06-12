@@ -26,6 +26,9 @@ public class StatusPageController {
 
     @GetMapping
     public ResponseEntity<List<StatusPageResponse>> getUserStatusPages(Principal principal) {
+        if (principal == null) {
+            throw new RuntimeException("User not authenticated");
+        }
         String email = principal.getName();
         return ResponseEntity.ok(statusPageService.getUserStatusPages(email));
     }
