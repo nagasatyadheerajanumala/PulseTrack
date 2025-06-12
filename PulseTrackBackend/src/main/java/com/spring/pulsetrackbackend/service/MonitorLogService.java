@@ -115,16 +115,4 @@ public class MonitorLogService {
             monitorRepo.save(monitor);
         }
     }
-
-    public List<MonitorLog> getLogsForMonitorLast24Hrs(Monitor monitor) {
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime yesterday = now.minusHours(24);
-        return monitorLogRepo.findByMonitorAndCheckedAtBetween(monitor, yesterday, now);
-    }
-
-    public double calculateUptimePercentage(List<MonitorLog> logs) {
-        if (logs.isEmpty()) return 100.0;
-        long successCount = logs.stream().filter(log -> log.getStatusCode() == 200).count();
-        return (successCount * 100.0) / logs.size();
-    }
 }
