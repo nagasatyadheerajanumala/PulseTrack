@@ -1,4 +1,4 @@
-package com.spring.pulsetrackbackend.security;
+package com.spring.pulsetrackbackend.config;
 
 import com.spring.pulsetrackbackend.model.User;
 import com.spring.pulsetrackbackend.repository.UserRepository;

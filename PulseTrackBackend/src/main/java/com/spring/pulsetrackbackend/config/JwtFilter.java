@@ -1,6 +1,6 @@
 package com.spring.pulsetrackbackend.config;
 
-import com.spring.pulsetrackbackend.security.CustomUserDetailsService;
+import com.spring.pulsetrackbackend.config.CustomUserDetailsService;
 import com.spring.pulsetrackbackend.security.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

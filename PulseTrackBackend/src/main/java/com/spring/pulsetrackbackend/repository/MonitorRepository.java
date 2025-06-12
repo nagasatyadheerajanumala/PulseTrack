@@ -8,5 +8,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MonitorRepository extends JpaRepository<Monitor, Long> {
-    Optional<Monitor> findByUser(User user);
+    List<Monitor> findByUser(User user);
 }
