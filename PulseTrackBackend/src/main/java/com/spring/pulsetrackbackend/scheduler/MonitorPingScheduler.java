@@ -5,8 +5,10 @@ import com.spring.pulsetrackbackend.repository.MonitorRepository;
 import com.spring.pulsetrackbackend.service.MonitorLogService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
 
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -22,6 +24,7 @@ public class MonitorPingScheduler {
 
     private final MonitorRepository monitorRepo;
     private final MonitorLogService monitorLogService;
+    private final SimpMessagingTemplate messagingTemplate;
 
     // Keeps track of last ping time for each monitor
     private final Map<Long, LocalDateTime> lastPingTimes = new HashMap<>();
@@ -47,7 +50,7 @@ public class MonitorPingScheduler {
             long start = System.currentTimeMillis();
             HttpURLConnection conn = (HttpURLConnection) new URL(monitor.getUrl()).openConnection();
             conn.setRequestMethod("GET");
-            conn.setConnectTimeout(5000); // 5 seconds
+            conn.setConnectTimeout(5000);
             conn.connect();
             int statusCode = conn.getResponseCode();
             long responseTime = System.currentTimeMillis() - start;
@@ -55,9 +58,30 @@ public class MonitorPingScheduler {
             monitorLogService.saveLog(monitor.getId(), statusCode, responseTime);
             log.info("Pinged {} - status: {}, time: {}ms", monitor.getUrl(), statusCode, responseTime);
 
+            // 🚀 Broadcast real-time update
+            messagingTemplate.convertAndSend(
+                    "/topic/status/" + monitor.getId(),
+                    Map.of(
+                            "monitorId", monitor.getId(),
+                            "statusCode", statusCode,
+                            "responseTime", responseTime,
+                            "checkedAt", LocalDateTime.now().toString()
+                    )
+            );
+
         } catch (Exception e) {
             log.error("Error pinging {}: {}", monitor.getUrl(), e.getMessage());
-            monitorLogService.saveLog(monitor.getId(), 0, -1); // 0 = failed to connect
+            monitorLogService.saveLog(monitor.getId(), 0, -1);
+
+            messagingTemplate.convertAndSend(
+                    "/topic/status/" + monitor.getId(),
+                    Map.of(
+                            "monitorId", monitor.getId(),
+                            "statusCode", 0,
+                            "responseTime", -1,
+                            "checkedAt", LocalDateTime.now().toString()
+                    )
+            );
         }
     }
 }

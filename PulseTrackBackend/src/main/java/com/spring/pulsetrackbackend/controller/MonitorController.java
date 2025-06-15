@@ -6,11 +6,13 @@ import com.spring.pulsetrackbackend.model.Monitor;
 import com.spring.pulsetrackbackend.service.MonitorService;
 import lombok.RequiredArgsConstructor;
 
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 @RestController
@@ -39,5 +41,22 @@ public class MonitorController {
             Principal principal) {
         monitorService.toggleMonitorStatus(monitorId, principal.getName());
         return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteMonitor(@PathVariable Long id, Principal principal) {
+        monitorService.deleteMonitor(id, principal.getName());
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{id}/analytics")
+    public ResponseEntity<Map<String, Object>> getMonitorAnalytics(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "24h") String range,
+            Principal principal) {
+
+        String email = principal.getName();
+        Map<String, Object> data = monitorService.getMonitorAnalytics(id, email, range);
+        return ResponseEntity.ok(data);
     }
 }

@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface AlertRepository extends JpaRepository<Alert, Long> {
     List<Alert> findByMonitorUserEmailAndResolved(String email, boolean resolved);
+    void deleteByMonitor(Monitor monitor);
 }

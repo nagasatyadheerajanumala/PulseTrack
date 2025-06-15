@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Set;
+import jakarta.persistence.Transient;
 
 @Entity
 @Data
@@ -31,5 +33,19 @@ public class Monitor {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @ManyToMany(mappedBy = "monitors")
+    private Set<StatusPage> statusPages;
+
+    @Transient
+    private Double uptimePercent;
+
+    public Double getUptimePercent() {
+        return uptimePercent;
+    }
+
+    public void setUptimePercent(Double uptimePercent) {
+        this.uptimePercent = uptimePercent;
+    }
 
 }

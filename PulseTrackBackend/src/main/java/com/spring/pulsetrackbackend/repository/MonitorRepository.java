@@ -9,4 +9,6 @@ import java.util.Optional;
 
 public interface MonitorRepository extends JpaRepository<Monitor, Long> {
     List<Monitor> findByUser(User user);
+    Optional<Monitor> findByIdAndUser(Long id, User user);
+
 }

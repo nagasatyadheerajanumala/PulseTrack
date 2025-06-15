@@ -12,4 +12,5 @@ public interface StatusPageRepository extends JpaRepository<StatusPage, Long> {
     List<StatusPage> findByUser(User user);
 
     Optional<StatusPage> findByPublicKey(String publicKey);
+    Optional<StatusPage> findByIdAndUser(Long id, User user);
 }
