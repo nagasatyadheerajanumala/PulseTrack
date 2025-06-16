@@ -200,7 +200,7 @@ Included in the public status page response:
 Have an idea or found a bug? Contributions are welcome!
 
 ```bash
-git clone https://github.com/nagasatyadheerajanumala/PulseTrack.git
+git clone git@github.com:nagasatyadheerajanumala/PulseTrack.git
 cd PulseTrack
 ```
 
