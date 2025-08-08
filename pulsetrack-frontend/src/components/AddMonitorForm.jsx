@@ -1,14 +1,35 @@
-// src/components/AddMonitorForm.jsx
 import { useState } from 'react';
 
 const AddMonitorForm = ({ onMonitorAdded }) => {
     const [name, setName] = useState('');
     const [url, setUrl] = useState('');
     const [checkFreq, setCheckFreq] = useState(5);
+    const [alertFrequencyMinutes, setAlertFrequencyMinutes] = useState(15);
+    const [httpMethod, setHttpMethod] = useState('GET');
+    const [headers, setHeaders] = useState('');
+    const [requestBody, setRequestBody] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         const token = localStorage.getItem("token");
+
+        let parsedHeaders = {};
+        try {
+            parsedHeaders = headers ? JSON.parse(headers) : {};
+        } catch (err) {
+            alert("Invalid JSON in headers");
+            return;
+        }
+
+        const payload = {
+            name,
+            url,
+            checkFreq,
+            alertFrequencyMinutes,
+            httpMethod,
+            headers: parsedHeaders,
+            requestBody,
+        };
 
         const res = await fetch('http://localhost:8080/api/monitors', {
             method: 'POST',
@@ -16,14 +37,18 @@ const AddMonitorForm = ({ onMonitorAdded }) => {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`,
             },
-            body: JSON.stringify({ name, url, checkFreq }),
+            body: JSON.stringify(payload),
         });
 
         if (res.ok) {
             setName('');
             setUrl('');
             setCheckFreq(5);
-            onMonitorAdded(); // refresh list
+            setAlertFrequencyMinutes(15);
+            setHttpMethod('GET');
+            setHeaders('');
+            setRequestBody('');
+            onMonitorAdded();
         } else {
             alert('Failed to add monitor');
         }
@@ -49,14 +74,46 @@ const AddMonitorForm = ({ onMonitorAdded }) => {
                     onChange={(e) => setUrl(e.target.value)}
                     required
                 />
+                <select
+                    value={httpMethod}
+                    onChange={(e) => setHttpMethod(e.target.value)}
+                    className="p-2 rounded bg-gray-700 text-white"
+                >
+                    <option value="GET">GET</option>
+                    <option value="POST">POST</option>
+                    <option value="PUT">PUT</option>
+                    <option value="DELETE">DELETE</option>
+                </select>
                 <input
                     type="number"
                     min={1}
+                    placeholder="Check Frequency (minutes)"
                     className="p-2 rounded bg-gray-700 text-white"
                     value={checkFreq}
                     onChange={(e) => setCheckFreq(e.target.value)}
-                    placeholder="Frequency (min)"
                     required
+                />
+                <input
+                    type="number"
+                    min={1}
+                    placeholder="Alert Frequency (minutes)"
+                    className="p-2 rounded bg-gray-700 text-white"
+                    value={alertFrequencyMinutes}
+                    onChange={(e) => setAlertFrequencyMinutes(e.target.value)}
+                />
+                <textarea
+                    placeholder='{"Authorization": "Bearer xyz"}'
+                    className="p-2 rounded bg-gray-700 text-white"
+                    value={headers}
+                    onChange={(e) => setHeaders(e.target.value)}
+                    rows={3}
+                />
+                <textarea
+                    placeholder="Raw JSON body for POST/PUT"
+                    className="p-2 rounded bg-gray-700 text-white"
+                    value={requestBody}
+                    onChange={(e) => setRequestBody(e.target.value)}
+                    rows={3}
                 />
                 <button className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded mt-2" type="submit">
                     Add Monitor

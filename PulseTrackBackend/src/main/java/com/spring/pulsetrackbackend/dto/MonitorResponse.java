@@ -13,6 +13,11 @@ public class MonitorResponse {
     private String url;
     private int checkFreq;
     private boolean isActive;
+    private String httpMethod;
+    private String requestBody;
+    private Integer alertFrequencyMinutes;
+
+    // Optional analytics fields
     private Double uptimePercent;
     private Long averageResponseTime;
     private LocalDateTime lastChecked;

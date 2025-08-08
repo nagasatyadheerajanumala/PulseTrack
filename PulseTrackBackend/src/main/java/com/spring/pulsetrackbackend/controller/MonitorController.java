@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -36,11 +37,13 @@ public class MonitorController {
     }
 
     @PutMapping("/{monitorId}/toggle")
-    public ResponseEntity<Void> toggleMonitor(
+    public ResponseEntity<Map<String, Object>> toggleMonitor(
             @PathVariable Long monitorId,
             Principal principal) {
-        monitorService.toggleMonitorStatus(monitorId, principal.getName());
-        return ResponseEntity.ok().build();
+        boolean updatedStatus = monitorService.toggleMonitorStatus(monitorId, principal.getName());
+        Map<String, Object> result = new HashMap<>();
+        result.put("active", updatedStatus);
+        return ResponseEntity.ok(result);
     }
 
     @DeleteMapping("/{id}")
@@ -59,4 +62,22 @@ public class MonitorController {
         Map<String, Object> data = monitorService.getMonitorAnalytics(id, email, range);
         return ResponseEntity.ok(data);
     }
+    @PutMapping("/{monitorId}")
+    public ResponseEntity<MonitorResponse> updateMonitor(
+            @PathVariable Long monitorId,
+            @RequestBody MonitorRequest request,
+            Principal principal) {
+
+        String email = principal.getName();
+        MonitorResponse updated = monitorService.updateMonitor(monitorId, email, request);
+        return ResponseEntity.ok(updated);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<MonitorResponse> getMonitorById(
+            @PathVariable Long id, Principal principal) {
+        String email = principal.getName();
+        return ResponseEntity.ok(monitorService.getMonitorById(id, email));
+    }
+
 }

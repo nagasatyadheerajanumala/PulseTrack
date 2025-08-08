@@ -1,11 +1,14 @@
 package com.spring.pulsetrackbackend.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spring.pulsetrackbackend.model.Monitor;
 import com.spring.pulsetrackbackend.model.MonitorLog;
 import com.spring.pulsetrackbackend.repository.MonitorLogRepository;
 import com.spring.pulsetrackbackend.repository.MonitorRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.*;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -23,6 +26,8 @@ public class MonitorSchedulerService {
 
     private final MonitorRepository monitorRepository;
     private final MonitorLogRepository monitorLogRepo;
+    private final ObjectMapper objectMapper;
+
     private final ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
     private final Map<Long, ScheduledFuture<?>> scheduledTasks = new ConcurrentHashMap<>();
 
@@ -44,23 +49,60 @@ public class MonitorSchedulerService {
         Runnable task = () -> {
             try {
                 Monitor dbMonitor = monitorRepository.findById(monitorId).orElse(null);
-                if (dbMonitor == null || !dbMonitor.isActive()) {
-                    return;
-                }
+                if (dbMonitor == null || !dbMonitor.isActive()) return;
 
                 RestTemplate restTemplate = new RestTemplate();
+
+                HttpMethod method = dbMonitor.getHttpMethod() != null
+                        ? HttpMethod.valueOf(dbMonitor.getHttpMethod().toUpperCase())
+                        : HttpMethod.GET;
+
+                HttpHeaders headers = new HttpHeaders();
+
+                if (dbMonitor.getHeadersJson() != null && !dbMonitor.getHeadersJson().isEmpty()) {
+                    Map<String, String> headerMap = objectMapper.readValue(
+                            dbMonitor.getHeadersJson(), new TypeReference<>() {});
+                    headerMap.forEach(headers::set);
+                }
+
+                HttpEntity<String> request = new HttpEntity<>(
+                        dbMonitor.getRequestBody(), headers
+                );
+
                 long start = System.currentTimeMillis();
-                var response = restTemplate.getForEntity(new URI(dbMonitor.getUrl()), String.class);
+
+                ResponseEntity<String> response = restTemplate.exchange(
+                        new URI(dbMonitor.getUrl()),
+                        method,
+                        request,
+                        String.class
+                );
+
                 long duration = System.currentTimeMillis() - start;
 
+                int statusCode = response.getStatusCodeValue();
+                String responseBody = response.getBody();
+
+// 🔍 Look for common API error messages
+                boolean bodyIndicatesError = responseBody != null &&
+                        (responseBody.toLowerCase().contains("invalid api key")
+                                || responseBody.toLowerCase().contains("\"error\"")
+                                || responseBody.toLowerCase().contains("unauthorized")
+                                || responseBody.toLowerCase().contains("forbidden"));
+
+                if (bodyIndicatesError) {
+                    statusCode = 403; // or any other number to indicate auth failure
+                }
+
                 MonitorLog log = MonitorLog.builder()
-                        .statusCode(response.getStatusCode().value())
+                        .statusCode(statusCode)
                         .responseTime(duration)
                         .checkedAt(LocalDateTime.now())
                         .monitor(dbMonitor)
                         .build();
 
                 monitorLogRepo.save(log);
+
             } catch (Exception e) {
                 Monitor fallback = monitorRepository.findById(monitorId).orElse(null);
                 if (fallback == null) return;

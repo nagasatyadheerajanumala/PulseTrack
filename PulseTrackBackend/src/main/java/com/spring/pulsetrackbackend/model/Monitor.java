@@ -40,6 +40,15 @@ public class Monitor {
     @Transient
     private Double uptimePercent;
 
+    private String httpMethod;
+    @Lob
+    private String headersJson;
+    @Lob
+    private String requestBody;
+
+    @Column(name = "last_ping_at")
+    private LocalDateTime lastPingAt;
+
     public Double getUptimePercent() {
         return uptimePercent;
     }

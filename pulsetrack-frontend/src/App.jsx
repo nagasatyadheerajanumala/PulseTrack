@@ -14,6 +14,7 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Features from "./pages/Features";
 import Layout from "./components/Layout";
+import EditMonitor from "./pages/EditMonitor.jsx";
 
 function App() {
     return (
@@ -34,6 +35,7 @@ function App() {
                         <Route path="/about" element={<About />} />
                         <Route path="/contact" element={<Contact />} />
                         <Route path="/features" element={<Features />} />
+                        <Route path="/edit-monitor/:id" element={<EditMonitor />} />
                     </Routes>
                 </div>
             </Router>
