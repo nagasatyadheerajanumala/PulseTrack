@@ -1,4 +1,4 @@
-# ⚡ PulseTrack – Uptime & Log Monitoring as a Service
+#  PulseTrack – Uptime & Log Monitoring as a Service
 
 PulseTrack is a full-stack monitoring tool that helps developers, startups, and small teams track the uptime and performance of their APIs, websites, or backend services — with real-time alerts, logs, public status pages, and analytics.
 
@@ -6,7 +6,7 @@ PulseTrack is a full-stack monitoring tool that helps developers, startups, and 
 
 ---
 
-## 🔧 Tech Stack
+##  Tech Stack
 
 | Layer       | Tech Used                                   |
 |-------------|---------------------------------------------|
@@ -18,9 +18,9 @@ PulseTrack is a full-stack monitoring tool that helps developers, startups, and 
 
 ---
 
-## 📦 Features
+##  Features
 
-### ✅ Core Functionality
+###  Core Functionality
 - Monitor any public/private **URL or API** at custom intervals
 - **Retry logic** before triggering alerts to reduce noise
 - Store logs for every health check (status, response time)
@@ -28,7 +28,7 @@ PulseTrack is a full-stack monitoring tool that helps developers, startups, and 
 - Public-facing **status pages** for transparency
 - JWT-authenticated REST API for secure access
 
-### 📊 Analytics & Real-time (Backend Done, Frontend In Progress)
+###  Analytics & Real-time (Backend Done, Frontend In Progress)
 - Uptime percentage over time
 - Average response time
 - Live WebSocket dashboard updates (in progress)
@@ -36,9 +36,9 @@ PulseTrack is a full-stack monitoring tool that helps developers, startups, and 
 
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
-### 🐳 Project Structure
+###  Project Structure
 
 ```
 pulsetrack/
@@ -57,7 +57,7 @@ pulsetrack/
 
 ---
 
-### 🧠 Backend Setup (Spring Boot)
+###  Backend Setup (Spring Boot)
 
 1. **Set up MySQL:**
 
@@ -87,16 +87,16 @@ npm install
 npm run dev  # or npm run start
 ```
 
-🔐 Authentication (JWT)
+ Authentication (JWT)
 	•	After login or registration, you receive a JWT token
 	•	Send it in every API request:
 ```
 Authorization: Bearer <token>
 ```
 
-## 📡 API Endpoints
+##  API Endpoints
 
-### 🔐 Authentication
+###  Authentication
 
 | Method | Endpoint         | Description              |
 |--------|------------------|--------------------------|
@@ -124,7 +124,7 @@ Authorization: Bearer <token>
 }
 ```
  
-### 🌐 Public Status Pages
+###  Public Status Pages
 
 | Method | Endpoint                                | Description                          |
 |--------|-----------------------------------------|--------------------------------------|
@@ -137,7 +137,7 @@ Authorization: Bearer <token>
 
 ---
 
-### 📈 Uptime & Analytics
+###  Uptime & Analytics
 
 Included in the public status page response:
 
@@ -167,7 +167,7 @@ Included in the public status page response:
 
 ---
 
-## 📤 Export & Logs (Upcoming)
+##  Export & Logs (Upcoming)
 
 | Feature           | Description                                      |
 |-------------------|--------------------------------------------------|
@@ -177,7 +177,7 @@ Included in the public status page response:
 
 ---
 
-## 🔒 Security Notes
+##  Security Notes
 
 - All monitor-related APIs are protected via **JWT-based authentication**.
 - Sensitive credentials (auth tokens, passwords) are **never exposed** in responses.
@@ -186,16 +186,16 @@ Included in the public status page response:
 
 ---
 
-## 💡 Use Cases
+##  Use Cases
 
-- 📈 Developers tracking uptime of microservices or APIs
-- 🛠️ Startups needing public status pages without paying for SaaS
-- 🚨 Teams wanting email/Slack alerts for incidents
-- 👨‍💻 Hackers and indie makers monitoring side projects
+-  Developers tracking uptime of microservices or APIs
+-  Startups needing public status pages without paying for SaaS
+-  Teams wanting email/Slack alerts for incidents
+-  Hackers and indie makers monitoring side projects
 
 ---
 
-## 🙌 Contributing
+##  Contributing
 
 Have an idea or found a bug? Contributions are welcome!
 
@@ -205,7 +205,7 @@ cd PulseTrack
 ```
 
 
-📬 Contact
+ Contact
 
-Made with 💻 by Naga Satya Dheeraj
+Made with passion by Naga Satya Dheeraj
 Project updates coming soon — stay tuned!
