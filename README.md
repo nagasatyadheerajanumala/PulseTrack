@@ -80,7 +80,7 @@ spring:
 cd backend
 ./mvnw spring-boot:run
 ```
-💻 Frontend Setup (React)
+Frontend Setup (React)
 ```
 cd frontend
 npm install
@@ -108,7 +108,7 @@ Authorization: Bearer <token>
 
 ---
 
-### 📊 Monitor Management (Protected Routes)
+###  Monitor Management (Protected Routes)
 
 | Method | Endpoint       | Description               |
 |--------|----------------|---------------------------|
